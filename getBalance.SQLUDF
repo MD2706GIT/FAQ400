@@ -1,0 +1,62 @@
+--
+-- function getBalance
+--
+--  Returns the stock balance at a given date for an item
+--
+--  Parameters:
+--  IN   item code      CHAR(15)
+--  IN   warehouse code CHAR(2)
+--  IN   date           DATE
+--
+--  OUT  stock balance  NUMERIC(10, 2)
+--      
+--
+CREATE OR REPLACE FUNCTION getBalance (
+pCodItem    CHAR(40),
+pCodWhs     CHAR(02),
+pDateBal    DATE
+)
+RETURNS   NUMERIC(10, 2)
+
+LANGUAGE SQL
+READS SQL DATA
+BEGIN
+
+DECLARE   balance DECIMAL(10, 2) ;
+SET       balance = 0 ;
+-- Gets current stock balance
+SET  balance = (
+ SELECT SUM(giacenza)
+FROM    SalMag00f
+WHERE   articolo = pCodItem
+  AND   (codMag  = pCodWhs OR pCodWhs = '  ')
+)
+;
+
+--- If the input date is equal or higher than current date,
+--- there is no need to process transactions
+IF pDateBal < CURRENT_DATE THEN
+--- Reads stock transactions back to input date
+FOR c1 CURSOR FOR
+SELECT
+ CASE WHEN segno  = '+' THEN quantita ELSE -1 * quantita END quantita
+FROM    MovMag00f
+WHERE   articolo = pCodItem
+  AND   dataMovimento >= pDateBal
+  AND   (codMag = pCodWhs OR pCodWhs = '  ')
+ORDER BY articolo, dataMovimento DESC
+
+  DO
+    SET  balance = balance - quantita ;
+
+END FOR ;
+
+END IF;
+
+IF balance < 0 THEN
+   SET balance = 0;
+END IF ;
+
+RETURN balance;
+
+END;

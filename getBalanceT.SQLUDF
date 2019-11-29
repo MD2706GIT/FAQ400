@@ -1,0 +1,113 @@
+--
+-- function getBalanceT
+--
+--  Returns a table with stock balance, puchase and sales balance 
+--   at a given date for an item
+--
+--  Parameters:
+--  IN   item code      CHAR(15)
+--  IN   warehouse code CHAR(2)
+--  IN   date           DATE
+--
+--  OUT  Table
+--       stock balance      DECIMAL(10, 2)
+--       purchase balance   DECIMAL(10, 2)
+--       sales balance      DECIMAL(10, 2)
+--      
+--
+CREATE OR REPLACE FUNCTION getBalanceT (
+pCodItem    CHAR(40),
+pCodWhs     CHAR(02),
+pDateBal    DATE
+)
+RETURNS TABLE (
+dateBalance     DATE,
+balanceWhs      DECIMAL(10, 2),
+balanceBuy      DECIMAL(10, 2),
+balanceSell     DECIMAL(10, 2)
+)
+
+LANGUAGE SQL
+READS SQL DATA
+BEGIN
+
+DECLARE   balanceW DECIMAL(10, 2) ;
+DECLARE   balanceP DECIMAL(10, 2) ;
+DECLARE   balanceS DECIMAL(10, 2) ;
+SET       balanceW = 0 ;
+-- Gets current stock balance
+SET  balanceW = (
+ SELECT SUM(giacenza)
+FROM    SalMag00f
+WHERE   articolo = pCodItem
+  AND   (codMag  = pCodWhs OR pCodWhs = '  ')
+)
+;
+
+--- If the input date is equal or higher than current date,
+--- there is no need to process transactions
+IF pDateBal < CURRENT_DATE THEN
+--- Reads stock transactions back to input date
+FOR c1 CURSOR FOR
+SELECT
+ CASE WHEN segno  = '+' THEN quantita ELSE -1 * quantita END quantita
+FROM    MovMag00f
+WHERE   articolo = pCodItem
+  AND   dataMovimento >= pDateBal
+  AND   (codMag = pCodWhs OR pCodWhs = '  ')
+ORDER BY articolo, dataMovimento DESC
+
+  DO
+    SET  balanceW = balanceW - quantita ;
+
+END FOR ;
+
+END IF;
+
+IF balanceW < 0 THEN
+   SET balanceW = 0;
+END IF ;
+
+-- Gets purchase orders balance -------------------------
+SET   balanceP = 0;
+--- Reads purchase orders detail back to input date
+FOR cP CURSOR FOR
+SELECT
+    CASE WHEN (OrdQty - RcvQty) < 0 THEN 0
+         ELSE (OrdQty - RcvQty) END qty
+FROM    PurcDT00f
+WHERE   item    =  pCodItem
+  AND   dueDate <= pDateBal
+  AND   closed  =  ' '
+  AND   (warehouse = pCodWhs OR pCodWhs = '  ')
+ORDER BY item, dueDate
+
+  DO
+    SET  balanceP = balanceP + qty ;
+
+END FOR ;
+
+-- Gets sales orders balance -------------------------
+SET   balanceS = 0;
+--- Reads sales orders detail back to input date
+FOR cS CURSOR FOR
+SELECT
+    CASE WHEN (OrdQty - ShpQty) < 0 THEN 0
+         ELSE (OrdQty - ShpQty) END qty
+FROM    SaleDT00f
+WHERE   item    =  pCodItem
+  AND   dueDate <= pDateBal
+  AND   closed  =  ' '
+  AND   (warehouse = pCodWhs OR pCodWhs = '  ')
+ORDER BY item, dueDate
+
+  DO
+    SET  balanceS = balanceS + qty ;
+
+END FOR ;
+-- Append results to virtual table   
+PIPE   (balanceW, balanceP, balanceS ) ;
+
+RETURN ;
+
+END;
