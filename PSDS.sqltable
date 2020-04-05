@@ -1,0 +1,44 @@
+-- Table PSDS
+-- External definition of Program Status DS
+--
+-- Compile with:
+-- RUNSQLSTM SRCFILE(mylib/myfile) SRCMBR(PSDS) COMMIT(*NONE) MARGINS(100)
+--  DFTRDBCOL(mylib)
+--
+CREATE OR REPLACE TABLE PSDS (
+Proc_Name     CHAR(10) ,
+Pgm_Status    NUMERIC(5, 0) ,
+Prv_Status    NUMERIC(5, 0) ,
+Line_Num      CHAR(8)       ,
+Routine       CHAR(8)       ,
+Parms         NUMERIC(3, 0) ,
+Excp_Type     CHAR(3)       ,
+Excp_Num      CHAR(4)       ,
+Res_01        CHAR(4)       ,
+Res_02        CHAR(30)      ,
+Pgm_Lib       CHAR(10)      ,
+Excp_Data     CHAR(80)      ,
+Excp_ID       CHAR(4)       ,
+Last_file1    CHAR(10)      ,
+Res_03        CHAR(6)       ,
+Pgm_Date      CHAR(8)       ,
+Pgm_Year      NUMERIC(2, 0) ,
+Last_File     CHAR(8)       ,
+File_Info     CHAR(35)      ,
+Job_Name      CHAR(10)      ,
+Job_User      CHAR(10)      ,
+Job_Num       NUMERIC(6, 0) ,
+Job_Date      NUMERIC(6, 0) ,
+Run_Date      NUMERIC(6, 0) ,
+Run_Time      NUMERIC(6, 0) ,
+Crt_Date      CHAR(6)       ,
+Crt_Time      CHAR(6)       ,
+Cpl_Level     CHAR(4)       ,
+Src_File      CHAR(10)      ,
+Src_Lib       CHAR(10)      ,
+Src_Mbr       CHAR(10)      ,
+Proc_Pgm      CHAR(10)      ,
+Proc_Mod      CHAR(10)      ,
+Src_ID        CHAR(4)       ,
+Cur_User      CHAR(10)
+)
