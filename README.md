@@ -11,6 +11,6 @@ FAQ400 Blog related stuff - Sources, tools etc...
 
 **FAQ40012A:**       Service program. Procedures included:
 
-- isCalledFrom: Check if a given program is in call stack  
+- *isCalledFrom*: Check if a given program is in call stack  
                     
 **PSDS:**            External definition for Program Status Data Structure
