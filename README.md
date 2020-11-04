@@ -12,7 +12,9 @@ FAQ400 Blog related stuff - Sources, tools etc...
 **FAQ40012A:**       Service program. Procedures included:
 
 - *isCalledFrom*: Check if a given program is in call stack  
+[See blog post](https://blog.faq400.com/en/db2-for-i/whos-calling-my-program/)
                     
 **FAQ40013:**        Display message in job log with SYSTOOLS.LPRINTF
+[See blog post](https://blog.faq400.com/en/db2-for-i/writing-messages-to-the-job-log-with-sql/)
 
 **PSDS:**            External definition for Program Status Data Structure
