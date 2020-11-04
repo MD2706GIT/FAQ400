@@ -13,4 +13,6 @@ FAQ400 Blog related stuff - Sources, tools etc...
 
 - *isCalledFrom*: Check if a given program is in call stack  
                     
+**FAQ40013:**        Display message in job log with SYSTOOLS.LPRINTF
+
 **PSDS:**            External definition for Program Status Data Structure
