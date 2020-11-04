@@ -1,0 +1,9 @@
+CREATE OR REPLACE TABLE BOMWRK (                 
+ LEVEL    NUMERIC(4, 0),                         
+ ITEMTYPE CHAR(1)       NOT NULL DEFAULT ' ' ,   
+ ITEMCODE CHAR(20)      NOT NULL DEFAULT ' ' ,   
+ COMPTYPE CHAR(1)       NOT NULL DEFAULT ' ' ,   
+ COMPCODE CHAR(20)      NOT NULL DEFAULT ' ' ,   
+ QUANTITY NUMERIC(9, 2) NOT NULL DEFAULT 0 )     
+                                                 
+ RCDFMT WBOM   ;                                 

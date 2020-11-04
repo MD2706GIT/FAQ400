@@ -1,0 +1,5 @@
+CREATE INDEX BomDT01L ON BomDT00F (  
+ itemType, itemCode                  
+ )                                   
+                                     
+ RCDFMT BOMDT   ;                    
